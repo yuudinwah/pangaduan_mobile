@@ -20,6 +20,10 @@ class AuthModel {
     return await AuthMiddleware.signup(name, email, password);
   }
 
+  Future<bool> signOut() async {
+    return await deletePref('token');
+  }
+
   Future<void> getToken() async {
     try {
       token = await getPref('token');

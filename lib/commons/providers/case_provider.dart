@@ -14,17 +14,9 @@ class CaseProvider with ChangeNotifier {
   Timer? timer;
 
   Future<void> init(String token) async {
-    if (timer == null) {
-      timer = Timer.periodic(
-        const Duration(minutes: 15),
-        (timer) async {
-          await loadCaseResponse(token);
-        },
-      );
-      await loadCaseResponse(token);
-      fullLoad = false;
-      notifyListeners();
-    }
+    await loadCaseResponse(token);
+    fullLoad = false;
+    notifyListeners();
   }
 
   Future<void> loadCaseResponse(String token) async {
@@ -32,7 +24,9 @@ class CaseProvider with ChangeNotifier {
       List<Map<String, dynamic>> raw =
           await CaseResponseMiddleware.fetch(token, id);
       responds = raw.map((e) => CaseResponseModel.fromMap(e)).toList();
+      print(responds.length);
     } catch (e) {
+      print(e);
       null;
     }
     caseController.refreshCompleted();

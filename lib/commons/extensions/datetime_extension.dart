@@ -10,7 +10,7 @@ extension DateTimeExtension on DateTime {
     } else if (duration.inDays > 7) {
       return dateFormat(format: 'dd MMM');
     } else if (duration.inDays > 0) {
-      return dateFormat(format: 'EEE dd');
+      return dateFormat(format: 'EEEE');
     } else if (duration.inHours > 0) {
       return '${dateFormat(format: 'hh')} jam lalu';
     } else if (duration.inMinutes > 0) {

@@ -4,7 +4,9 @@ import 'package:pangaduan/commons/providers/app_provider.dart';
 import 'package:pangaduan/commons/providers/home_provider.dart';
 import 'package:pangaduan/commons/utils/color.dart';
 import 'package:pangaduan/screens/auth/auth_screen.dart';
+import 'package:pangaduan/screens/case/case_screen.dart';
 import 'package:pangaduan/screens/container/container_screen.dart';
+import 'package:pangaduan/screens/home/home_screen.dart';
 import 'package:pangaduan/screens/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -51,6 +53,28 @@ class MyApp extends StatelessWidget {
               routes: {
                 'home': (context) => const ContainerScreen(),
                 'auth': (context) => const AuthScreen(),
+              },
+              onGenerateRoute: (settings) {
+                Widget page;
+                Uri uri = Uri.parse(settings.name ?? '');
+                switch (uri.pathSegments.first) {
+                  case 'case':
+                    if (uri.pathSegments.length > 1) {
+                      page = CaseScreen(uri.pathSegments[1]);
+                    } else {
+                      page = const HomeScreen();
+                    }
+                    break;
+                  default:
+                    page = const ContainerScreen();
+                }
+                return PageRouteBuilder(
+                  settings: settings,
+                  pageBuilder: (_, a1, a2) {
+                    return page;
+                  },
+                  transitionDuration: const Duration(seconds: 0),
+                );
               },
             );
           },

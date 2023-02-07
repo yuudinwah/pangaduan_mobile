@@ -5,6 +5,7 @@ import 'package:pangaduan/resources/middlewares/case_middleware.dart';
 import 'package:pangaduan/resources/middlewares/dashboard_middleware.dart';
 import 'package:pangaduan/resources/middlewares/log_middleware.dart';
 import 'package:pangaduan/resources/middlewares/user_middleware.dart';
+import 'package:pangaduan/resources/models/auth_model.dart';
 import 'package:pangaduan/resources/models/case_model.dart';
 import 'package:pangaduan/resources/models/dashboard_model.dart';
 import 'package:pangaduan/resources/models/log_model.dart';
@@ -76,5 +77,26 @@ class HomeProvider with ChangeNotifier {
     List<Map<String, dynamic>> raw = await UserMiddleware.fetch(token);
     users = raw.map((e) => UserModel.fromMap(e)).toList();
     notifyListeners();
+  }
+
+  Future<void> sendCase(AuthModel auth) async {
+    try {
+      if (caseFormController.text.isEmpty) {
+        throw '';
+      }
+      await CaseMiddleware.add(
+        userID: auth.user!.id,
+        name: auth.user!.name,
+        email: auth.user!.email,
+        title: "-",
+        detail: caseFormController.text,
+      );
+      caseFormController.clear();
+      notifyListeners();
+      await loadCases(auth.token!);
+    } catch (e) {
+      print(e);
+      null;
+    }
   }
 }

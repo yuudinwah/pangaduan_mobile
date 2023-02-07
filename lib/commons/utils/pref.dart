@@ -5,6 +5,11 @@ Future<dynamic> getPref(String key) async {
   return prefs.get(key);
 }
 
+Future<bool> deletePref(String key) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.remove(key);
+}
+
 Future<bool> savePref(String key, dynamic value) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   try {

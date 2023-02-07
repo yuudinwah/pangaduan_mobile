@@ -21,8 +21,8 @@ class CaseResponseModel {
       caseID: value['caseID'],
       userID: value['userID'],
       response: value['response'],
-      createdAt: DateTime.tryParse(value['createdAt']),
-      updatedAt: DateTime.tryParse(value['updatedAt']),
+      createdAt: DateTime.tryParse(value['createdAt'] ?? ''),
+      updatedAt: DateTime.tryParse(value['updatedAt'] ?? ''),
     );
   }
 }

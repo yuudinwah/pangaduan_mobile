@@ -619,19 +619,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ),
-                    color: Colors.white,
-                    width: width,
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Keluar',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.red,
+                  InkWell(
+                    onTap: () {
+                      showDialog<bool>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Keluar Akun'),
+                          content: const Text(
+                            'Lanjutkan keluar akun?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text('Ya'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('Tidak'),
+                            ),
+                          ],
+                        ),
+                      ).then((value) async {
+                        if (value ?? false) {
+                          bool action = await auth.signOut();
+                          if (action) {
+                            Future.delayed(const Duration()).then((value) {
+                              Navigator.pushReplacementNamed(context, 'auth');
+                            });
+                          }
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                      ),
+                      color: Colors.white,
+                      width: width,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Keluar',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),

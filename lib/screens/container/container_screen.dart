@@ -6,7 +6,7 @@ import 'package:pangaduan/resources/models/user_model.dart';
 import 'package:pangaduan/screens/dashboard/dashboard_screen.dart';
 import 'package:pangaduan/screens/home/home_screen.dart';
 import 'package:pangaduan/screens/log/log_screen.dart';
-import 'package:pangaduan/screens/profile/profie_screen.dart';
+import 'package:pangaduan/screens/profile/profile_screen.dart';
 import 'package:pangaduan/commons/utils/color.dart';
 import 'package:provider/provider.dart';
 
