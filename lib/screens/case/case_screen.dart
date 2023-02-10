@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:pangaduan/commons/extensions/list_usermodel_extension.dart';
 import 'package:pangaduan/commons/providers/app_provider.dart';
 import 'package:pangaduan/commons/providers/case_provider.dart';
@@ -29,7 +27,7 @@ class _CaseScreenState extends State<CaseScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     AuthModel auth = Provider.of<AppProvider>(context).auth;
-    UserModel user = auth.user!;
+    // UserModel user = auth.user!;
     HomeProvider home = Provider.of<HomeProvider>(context);
     CaseModel caseModel = home.cases.getCase(widget.id)!;
     String newStatus = '';

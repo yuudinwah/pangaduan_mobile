@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double height = MediaQuery.of(context).size.height;
     AuthModel auth = Provider.of<AppProvider>(context).auth;
     UserModel user = auth.user!;
     HomeProvider home = Provider.of<HomeProvider>(context);

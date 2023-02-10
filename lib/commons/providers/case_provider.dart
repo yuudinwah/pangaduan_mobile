@@ -27,9 +27,7 @@ class CaseProvider with ChangeNotifier {
       List<Map<String, dynamic>> raw =
           await CaseResponseMiddleware.fetch(token, id);
       responds = raw.map((e) => CaseResponseModel.fromMap(e)).toList();
-      print(responds.length);
     } catch (e) {
-      print(e);
       null;
     }
     caseController.refreshCompleted();

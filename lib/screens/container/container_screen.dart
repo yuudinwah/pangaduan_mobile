@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pangaduan/commons/providers/app_provider.dart';
 import 'package:pangaduan/commons/providers/home_provider.dart';
 import 'package:pangaduan/resources/models/auth_model.dart';
-import 'package:pangaduan/resources/models/user_model.dart';
 import 'package:pangaduan/screens/dashboard/dashboard_screen.dart';
 import 'package:pangaduan/screens/home/home_screen.dart';
 import 'package:pangaduan/screens/log/log_screen.dart';

@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double height = MediaQuery.of(context).size.height;
     AppProvider app = Provider.of<AppProvider>(context);
     AuthModel auth = app.auth;
     UserModel user = auth.user!;
