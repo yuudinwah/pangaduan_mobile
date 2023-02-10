@@ -19,4 +19,23 @@ class CaseResponseMiddleware {
         jsonDecode(response.body) as Map<String, dynamic>;
     return List<Map<String, dynamic>>.from(body['data']);
   }
+
+  static Future<void> add({
+    required String caseID,
+    required String userID,
+    required String caseResponse,
+  }) async {
+    http.Response response = await http.post(caseResponseAddUrl,
+        body: jsonEncode({
+          "caseID": caseID,
+          "userID": userID,
+          "response": caseResponse,
+        }));
+    if (response.statusCode != 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+      throw (Map<String, dynamic>.from(
+        body['status'] ?? {'message': 'Gagal terhubung ke server'},
+      ))['message'];
+    }
+  }
 }

@@ -1,3 +1,5 @@
+import 'package:pangaduan/resources/middlewares/case_middleware.dart';
+
 class CaseModel {
   String id;
   String name;
@@ -32,6 +34,18 @@ class CaseModel {
       respond: value['respond'] ?? '',
       createdAt: DateTime.tryParse(value['createdAt'] ?? ''),
       updatedAt: DateTime.tryParse(value['updatedAt'] ?? ''),
+    );
+  }
+
+  Future<void> updateStatus(String newStatus, String token) async {
+    await CaseMiddleware.update(
+      id,
+      token: token,
+      name: name,
+      email: email,
+      title: title,
+      detail: detail,
+      status: newStatus,
     );
   }
 }

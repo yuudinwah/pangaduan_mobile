@@ -40,4 +40,32 @@ class CaseMiddleware {
       ))['message'];
     }
   }
+
+  static Future<void> update(
+    String id, {
+    required String token,
+    required String name,
+    required String email,
+    required String title,
+    required String detail,
+    required String status,
+  }) async {
+    http.Response response = await http.put(caseUpdateUrl,
+        headers: {'token': token},
+        body: jsonEncode({
+          "id": id,
+          "name": name,
+          "email": email,
+          "title": title,
+          "detail": detail,
+          "status": status,
+        }));
+    if (response.statusCode != 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+
+      throw (Map<String, dynamic>.from(
+        body['status'] ?? {'message': 'Gagal terhubung ke server'},
+      ))['message'];
+    }
+  }
 }

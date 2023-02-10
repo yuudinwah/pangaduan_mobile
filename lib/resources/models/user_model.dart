@@ -19,4 +19,16 @@ class UserModel {
       roles: List<String>.from(value['roles'] ?? []),
     );
   }
+
+  bool isPetugas() {
+    return roles.contains('Petugas');
+  }
+
+  bool isDeveloper() {
+    return roles.contains('Developer');
+  }
+
+  bool isMasyarakat() {
+    return roles.contains('Masyarakat');
+  }
 }

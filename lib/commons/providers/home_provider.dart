@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pangaduan/commons/providers/app_provider.dart';
 import 'package:pangaduan/resources/middlewares/case_middleware.dart';
 import 'package:pangaduan/resources/middlewares/dashboard_middleware.dart';
 import 'package:pangaduan/resources/middlewares/log_middleware.dart';
@@ -21,6 +22,7 @@ class HomeProvider with ChangeNotifier {
       waiting: '', process: '', end: '', fake: '', total: '', users: '');
   RefreshController dashboardController = RefreshController();
   RefreshController homeController = RefreshController();
+  RefreshController profileController = RefreshController();
 
   TextEditingController caseFormController = TextEditingController();
   bool fullLoad = true;
@@ -70,12 +72,19 @@ class HomeProvider with ChangeNotifier {
   Future<void> loadLog(String token) async {
     List<Map<String, dynamic>> raw = await LogMiddleware.fetch(token);
     logs = raw.map((e) => LogModel.fromMap(e)).toList();
+    dashboardController.refreshCompleted();
     notifyListeners();
   }
 
   Future<void> loadUsers(String token) async {
     List<Map<String, dynamic>> raw = await UserMiddleware.fetch(token);
     users = raw.map((e) => UserModel.fromMap(e)).toList();
+    notifyListeners();
+  }
+
+  Future<void> loadProfile(AppProvider app) async {
+    await app.auth.getUser();
+    profileController.refreshCompleted();
     notifyListeners();
   }
 
@@ -95,7 +104,6 @@ class HomeProvider with ChangeNotifier {
       notifyListeners();
       await loadCases(auth.token!);
     } catch (e) {
-      print(e);
       null;
     }
   }

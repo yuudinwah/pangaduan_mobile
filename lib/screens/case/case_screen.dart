@@ -32,6 +32,14 @@ class _CaseScreenState extends State<CaseScreen> {
     UserModel user = auth.user!;
     HomeProvider home = Provider.of<HomeProvider>(context);
     CaseModel caseModel = home.cases.getCase(widget.id)!;
+    String newStatus = '';
+    switch (caseModel.status) {
+      case 'Menunggu':
+        newStatus = 'Proses';
+        break;
+      default:
+        newStatus = 'Selesai';
+    }
     return ChangeNotifierProvider<CaseProvider>(
       create: (_) => CaseProvider(widget.id),
       builder: (_, __) {
@@ -41,129 +49,388 @@ class _CaseScreenState extends State<CaseScreen> {
               WidgetsBinding.instance
                   .addPostFrameCallback((_) => caseProvider.init(auth.token!));
             }
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Detail Pengaduan'),
-              ),
-              body: SmartRefresher(
-                controller: caseProvider.caseController,
-                onRefresh: () => caseProvider.loadCaseResponse(auth.token!),
-                child: Builder(builder: (context) {
-                  if (caseProvider.fullLoad) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              bottom: BorderSide(
-                                color: greyLight,
+            return Material(
+              child: Stack(
+                children: [
+                  Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Detail Pengaduan'),
+                      actions: [
+                        if (caseModel.status != 'Selesai')
+                          InkWell(
+                            onTap: () async {
+                              await caseModel.updateStatus(
+                                  newStatus, auth.token!);
+                              await home.loadCases(auth.token!);
+                              await caseProvider.loadCaseResponse(auth.token!);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    newStatus == "Selesai" ? Colors.blue : teal,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    newStatus,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ],
+                    ),
+                    body: SmartRefresher(
+                      controller: caseProvider.caseController,
+                      onRefresh: () =>
+                          caseProvider.loadCaseResponse(auth.token!),
+                      child: Builder(builder: (context) {
+                        if (caseProvider.fullLoad) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return SingleChildScrollView(
+                          child: Column(
                             children: [
                               Container(
-                                height: 36,
-                                width: 36,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 16,
                                 ),
-                                child: Image.asset('assets/images/user.png'),
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: Column(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: greyLight,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      height: 30,
-                                      width: width,
-                                      child: Row(
+                                    Container(
+                                      height: 36,
+                                      width: 36,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child:
+                                          Image.asset('assets/images/user.png'),
+                                    ),
+                                    const SizedBox(
+                                      width: 16,
+                                    ),
+                                    Expanded(
+                                      child: Column(
                                         children: [
-                                          Text(
-                                            caseModel.name,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                          SizedBox(
+                                            height: 30,
+                                            width: width,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  caseModel.name,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 4,
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 12,
+                                                  ),
+                                                  height: 20,
+                                                  decoration: BoxDecoration(
+                                                    color: teal,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    caseModel.status,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const Expanded(
+                                                  child: SizedBox(),
+                                                ),
+                                                Text(
+                                                  (caseModel.createdAt ??
+                                                          DateTime.now())
+                                                      .toLog(),
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width,
+                                            child: Text(
+                                              caseModel.detail,
                                             ),
                                           ),
                                           const SizedBox(
-                                            width: 4,
+                                            height: 30,
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                            ),
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              color: teal,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              caseModel.status,
-                                              style: const TextStyle(
-                                                fontSize: 10,
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Column(
+                                children: List.generate(
+                                    caseProvider.responds.length, (index) {
+                                  CaseResponseModel respond =
+                                      caseProvider.responds[index];
+                                  UserModel? responded =
+                                      home.users.getUser(respond.userID);
+                                  // return Text(
+                                  //     respond.userID + index.toString());
+                                  if (responded == null) {
+                                    return const SizedBox();
+                                  }
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: greyLight,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 36,
+                                          width: 36,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/user.png'),
+                                        ),
+                                        const SizedBox(
+                                          width: 16,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30,
+                                                width: width,
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      responded.name,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 4,
+                                                    ),
+                                                    const Expanded(
+                                                      child: SizedBox(),
+                                                    ),
+                                                    Text(
+                                                      (respond.createdAt ??
+                                                              DateTime.now())
+                                                          .toLog(),
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: width,
+                                                child: Text(
+                                                  respond.response,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  if (auth.user!.isPetugas() && caseModel.status == "Proses")
+                    Positioned(
+                      bottom: 16,
+                      right: 16,
+                      child: InkWell(
+                        onTap: caseProvider.changeFormStatus,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: teal,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          alignment: Alignment.center,
+                          child: Row(
+                            children: const [
+                              Text(
+                                'Respond',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (caseModel.status == "Proses" && caseProvider.showForm)
+                    GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      child: Scaffold(
+                        appBar: AppBar(
+                          leading: InkWell(
+                            onTap: caseProvider.changeFormStatus,
+                            child: const Icon(Icons.close),
+                          ),
+                          title: const Text('Tambah Respon Pengaduan'),
+                        ),
+                        body: Container(
+                          height: height,
+                          width: width,
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller:
+                                      caseProvider.caseRespondController,
+                                  maxLines: 99,
+                                  minLines: 99,
+                                  decoration: const InputDecoration(
+                                    hintText:
+                                        'Masukkan keterangan status dari pengaduan ini ...',
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
+                                    ),
+                                    border: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    focusedErrorBorder: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 60,
+                                width: width,
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Expanded(
+                                      child: SizedBox(),
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        await caseProvider.sendRespond(auth);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 8,
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: newStatus == "Selesai"
+                                              ? Colors.blue
+                                              : teal,
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              'Kirim',
+                                              style: TextStyle(
                                                 color: Colors.white,
                                               ),
                                             ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(),
-                                          ),
-                                          Text(
-                                            (caseModel.createdAt ??
-                                                    DateTime.now())
-                                                .toLog(),
-                                            style: const TextStyle(
-                                              fontSize: 12,
+                                            SizedBox(width: 8),
+                                            Icon(
+                                              Icons.send,
+                                              color: Colors.white,
+                                              size: 16,
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: width,
-                                      child: Text(
-                                        caseModel.detail,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                      width: width,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.turn_left_sharp,
-                                            color: grey,
-                                            size: 20,
-                                          ),
-                                          Container(
-                                            height: 30,
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              '${caseModel.respond} Respon',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -172,96 +439,9 @@ class _CaseScreenState extends State<CaseScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Column(
-                          children: List.generate(caseProvider.responds.length,
-                              (index) {
-                            CaseResponseModel respond =
-                                caseProvider.responds[index];
-                            UserModel? responded =
-                                home.users.getUser(respond.userID);
-                            return Text(respond.userID + index.toString());
-                            if (responded == null) {}
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: greyLight,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 36,
-                                    width: 36,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child:
-                                        Image.asset('assets/images/user.png'),
-                                  ),
-                                  const SizedBox(
-                                    width: 16,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 30,
-                                          width: width,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                responded!.name,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(),
-                                              ),
-                                              Text(
-                                                (respond.createdAt ??
-                                                        DateTime.now())
-                                                    .toLog(),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: width,
-                                          child: Text(
-                                            respond.response,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
+                      ),
                     ),
-                  );
-                }),
+                ],
               ),
             );
           },

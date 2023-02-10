@@ -10,6 +10,7 @@ Uri caseAddUrl = Uri.parse('$url/case/add');
 Uri caseDeleteUrl = Uri.parse('$url/case/delete');
 Uri caseFetchUrl = Uri.parse('$url/case/fetch');
 Uri caseGetUrl = Uri.parse('$url/case/get');
+Uri caseUpdateUrl = Uri.parse('$url/case/update');
 // Case Response URL
 Uri caseResponseAddUrl = Uri.parse('$url/case-response/add');
 Uri caseResponseDeleteUrl = Uri.parse('$url/case-response/delete');

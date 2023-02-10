@@ -30,7 +30,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
     }
     return Scaffold(
       body: DefaultTabController(
-        length: 4,
+        length: auth.user!.isPetugas() ? 4 : 2,
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).requestFocus(FocusNode());
@@ -48,13 +48,13 @@ class _ContainerScreenState extends State<ContainerScreen> {
                   SizedBox(
                     height: height,
                     width: width,
-                    child: const TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        DashboardScreen(),
-                        HomeScreen(),
-                        LogScreen(),
-                        ProfileScreen(),
+                        if (auth.user!.isPetugas()) const DashboardScreen(),
+                        const HomeScreen(),
+                        if (auth.user!.isPetugas()) const LogScreen(),
+                        const ProfileScreen(),
                       ],
                     ),
                   ),
@@ -99,23 +99,25 @@ class _ContainerScreenState extends State<ContainerScreen> {
                         labelColor: teal,
                         unselectedLabelColor: grey,
                         indicatorColor: Colors.transparent,
-                        tabs: const [
-                          Tab(
-                            child: Icon(
-                              Icons.widgets_rounded,
+                        tabs: [
+                          if (auth.user!.isPetugas())
+                            const Tab(
+                              child: Icon(
+                                Icons.widgets_rounded,
+                              ),
                             ),
-                          ),
-                          Tab(
+                          const Tab(
                             child: Icon(
                               Icons.home_rounded,
                             ),
                           ),
-                          Tab(
-                            child: Icon(
-                              Icons.notifications_none_rounded,
+                          if (auth.user!.isPetugas())
+                            const Tab(
+                              child: Icon(
+                                Icons.notifications_none_rounded,
+                              ),
                             ),
-                          ),
-                          Tab(
+                          const Tab(
                             child: Icon(
                               Icons.face,
                             ),
